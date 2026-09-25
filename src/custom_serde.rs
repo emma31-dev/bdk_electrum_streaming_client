@@ -7,8 +7,7 @@ use serde::{
     Deserialize, Deserializer,
 };
 use serde_json::Value;
-
-use crate::{CowStr, Version, JSONRPC_VERSION_2_0};
+use crate::{CowStr, Version};
 
 pub fn from_consensus_hex<'de, T, D>(deserializer: D) -> Result<T, D::Error>
 where
@@ -145,10 +144,10 @@ where
     D: Deserializer<'de>,
 {
     let version_str = CowStr::deserialize(deserializer)?;
-    if version_str != JSONRPC_VERSION_2_0 {
-        return Err(serde::de::Error::custom("JSON-RPC version is not 2.0"));
+    match version_str {
+        v if v == Version::V2.as_str() => Ok(Version::V2),
+        _ => Err(serde::de::Error::custom("JSON-RPC version is not 2.0")),
     }
-    Ok(Version)
 }
 
 #[cfg(test)]

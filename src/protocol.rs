@@ -8,29 +8,37 @@ use std::fmt::Display;
 
 use crate::{CowStr, Request};
 
-/// The JSON-RPC protocol version supported by this client.
-///
-/// Always set to `"2.0"` per the Electrum protocol specification.
-pub const JSONRPC_VERSION_2_0: &str = "2.0";
-
 /// Represents the `jsonrpc` version field in JSON-RPC messages.
 ///
 /// In Electrum, this is always the string `"2.0"`, as required by the JSON-RPC 2.0 specification.
 /// It appears in all standard requests, responses, and notifications.
 ///
 /// This type ensures consistent serialization and deserialization of the version field.
-#[derive(Debug, Clone, Copy)]
-pub struct Version;
+#[derive(Debug, Clone, Copy, Default)]
+pub enum Version {
+    /// JSON-RPC 2.0, the only version currently supported.
+    #[default]
+    V2,
+}
+
+impl Version {
+    /// The string representation of this version.
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Version::V2 => "2.0",
+        }
+    }
+}
 
 impl Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(JSONRPC_VERSION_2_0)
+        f.write_str(self.as_str())
     }
 }
 
 impl AsRef<str> for Version {
     fn as_ref(&self) -> &str {
-        JSONRPC_VERSION_2_0
+        self.as_str()
     }
 }
 
@@ -116,7 +124,7 @@ impl RawRequest {
     /// This sets the JSON-RPC version to `"2.0"`.
     pub fn new(id: u32, method: CowStr, params: Vec<Value>) -> Self {
         Self {
-            jsonrpc: JSONRPC_VERSION_2_0.into(),
+            jsonrpc: Version::default().as_str().into(),
             id,
             method,
             params,
