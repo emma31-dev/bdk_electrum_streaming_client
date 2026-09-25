@@ -155,6 +155,35 @@ pub struct GetBalanceResp {
     pub unconfirmed: SignedAmount,
 }
 
+/// Response to the `"blockchain.outpoint.subscribe"` method.
+///
+/// Describes the status of a transaction output (TXO), taking the mempool into consideration.
+///
+/// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct OutPointSubscribeResp {
+    /// The integer height of the block the funding transaction was confirmed in.
+    ///
+    /// If the funding transaction is in the mempool, the value is `0` if all its inputs are
+    /// confirmed, and `-1` otherwise. This key is present if and only if there exists a funding
+    /// transaction (either in the best chain or in the mempool), regardless of spentness.
+    pub funder_height: u32,
+
+    /// The TXID of the spending transaction.
+    ///
+    /// This key is present if and only if there exists a spending transaction (either in the best
+    /// chain or in the mempool).
+    #[serde(rename = "spender_txhash")]
+    pub spender_txid: bitcoin::Txid,
+
+    /// The integer height of the block the spending transaction was confirmed in.
+    ///
+    /// If the spending transaction is in the mempool, the value is `0` if all its inputs are
+    /// confirmed, and `-1` otherwise. This key is present if and only if the `spender_txhash` key
+    /// is present.
+    pub spender_height: u32,
+}
+
 #[derive(Debug, Clone, serde::Deserialize)]
 #[serde(untagged)]
 pub enum Tx {

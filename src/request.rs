@@ -303,6 +303,43 @@ impl Request for HeadersSubscribe {
     }
 }
 
+/// A subscription request for receiving notifications about a specific outpoint.
+///
+/// This corresponds to the `"blockchain.outpoint.subscribe"` Electrum RPC method. Once subscribed,
+/// the server will push a notification whenever the outpoint is spent (or the spending transaction
+/// is unconfirmed/confirmed).
+///
+/// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct OutPointSubscribe {
+    /// The TXID of the funding transaction as a hexadecimal string (sometimes called
+    /// `prevout_hash`, in inputs).
+    pub tx_hash: Txid,
+
+    /// The output index, a non-negative integer (sometimes called `prevout_n`, in inputs).
+    pub txout_idx: u32,
+
+    /// The scriptPubKey (output script) corresponding to the outpoint (prevout), as a hexadecimal
+    /// string. This helps the server find the outpoint. Behaviour is undefined if an incorrect
+    /// value is provided.
+    pub spk_hint: ElectrumScriptHash,
+}
+
+impl Request for OutPointSubscribe {
+    type Response = response::OutPointSubscribeResp;
+
+    fn to_method_and_params(&self) -> MethodAndParams {
+        (
+            "blockchain.outpoint.subscribe".into(),
+            vec![
+                self.tx_hash.to_string().into(),
+                self.txout_idx.into(),
+                self.spk_hint.to_string().into(),
+            ],
+        )
+    }
+}
+
 /// A request for the minimum fee rate accepted by the Electrum server's mempool.
 ///
 /// This corresponds to the `"blockchain.relayfee"` Electrum RPC method. It returns the minimum

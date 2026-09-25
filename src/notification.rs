@@ -5,6 +5,7 @@
 //!
 //! - [`Notification::Header`] for `"blockchain.headers.subscribe"`
 //! - [`Notification::ScriptHash`] for `"blockchain.scripthash.subscribe"`
+//! - [`Notification::OutPoint`] for `"blockchain.outpoint.subscribe"`
 //! - `Notification::SpSubscribe` for `"blockchain.silentpayments.subscribe"` (requires the `frigate` feature)
 //! - [`Notification::Unknown`] for unrecognized or unsupported methods
 //!
@@ -33,6 +34,10 @@ pub enum Notification {
     /// status.
     ScriptHash(ScriptHashNotification),
 
+    /// A notification from `"blockchain.outpoint.subscribe"` indicating a change in outpoint
+    /// status.
+    OutPoint(OutPointNotification),
+
     /// A notification from `"blockchain.silentpayments.subscribe"` indicating a new history
     /// of transactions
     #[cfg(feature = "frigate")]
@@ -57,6 +62,9 @@ impl Notification {
             }
             "blockchain.scripthash.subscribe" => {
                 ScriptHashNotification::deserialize(params).map(Notification::ScriptHash)
+            }
+            "blockchain.outpoint.subscribe" => {
+                OutPointNotification::deserialize(params).map(Notification::OutPoint)
             }
             #[cfg(feature = "frigate")]
             "blockchain.silentpayments.subscribe" => {
@@ -110,6 +118,36 @@ impl ScriptHashNotification {
     /// Returns the new script status associated with the script hash.
     pub fn script_status(&self) -> Option<ElectrumScriptStatus> {
         self.param_1
+    }
+}
+
+/// A notification indicating a change in the status of a specific outpoint.
+///
+/// Corresponds to the `"blockchain.outpoint.subscribe"` Electrum notification method.
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct OutPointNotification {
+    param_0: response::OutPointSubscribeResp,
+}
+
+impl OutPointNotification {
+    /// Returns the outpoint associated with the notification.
+    pub fn outpoint(&self) -> response::OutPointSubscribeResp {
+        self.param_0.clone()
+    }
+
+    /// Returns the funder height associated with the outpoint.
+    pub fn funder_height(&self) -> u32 {
+        self.param_0.funder_height
+    }
+
+    /// Returns the spender txid associated with the outpoint.
+    pub fn spender_txid(&self) -> bitcoin::Txid {
+        self.param_0.spender_txid
+    }
+
+    /// Returns the spender height associated with the outpoint.
+    pub fn spender_height(&self) -> u32 {
+        self.param_0.spender_height
     }
 }
 
