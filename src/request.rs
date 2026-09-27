@@ -308,6 +308,7 @@ impl Request for HeadersSubscribe {
 /// This corresponds to the `"blockchain.outpoint.subscribe"` Electrum RPC method. Once subscribed,
 /// the server will push a notification whenever the outpoint is spent (or the spending transaction
 /// is unconfirmed/confirmed).
+/// Available in  Electrum protocol v1.7.
 ///
 /// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

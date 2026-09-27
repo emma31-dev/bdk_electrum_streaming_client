@@ -158,6 +158,7 @@ pub struct GetBalanceResp {
 /// Response to the `"blockchain.outpoint.subscribe"` method.
 ///
 /// Describes the status of a transaction output (TXO), taking the mempool into consideration.
+/// Available in  Electrum protocol v1.7
 ///
 /// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
 #[derive(Debug, Clone, serde::Deserialize)]

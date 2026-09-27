@@ -124,6 +124,7 @@ impl ScriptHashNotification {
 /// A notification indicating a change in the status of a specific outpoint.
 ///
 /// Corresponds to the `"blockchain.outpoint.subscribe"` Electrum notification method.
+/// Available in  Electrum protocol v1.7
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct OutPointNotification {
     param_0: response::OutPointSubscribeResp,
