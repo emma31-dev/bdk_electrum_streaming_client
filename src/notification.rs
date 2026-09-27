@@ -127,12 +127,12 @@ impl ScriptHashNotification {
 /// Available in  Electrum protocol v1.7
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct OutPointNotification {
-    param_0: response::OutPointSubscribeResp,
+    param_0: response::OutPointNotificationResp,
 }
 
 impl OutPointNotification {
     /// Returns the outpoint associated with the notification.
-    pub fn outpoint(&self) -> response::OutPointSubscribeResp {
+    pub fn outpoint(&self) -> response::OutPointNotificationResp {
         self.param_0.clone()
     }
 

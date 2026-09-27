@@ -169,6 +169,16 @@ pub struct OutPointSubscribeResp {
     /// confirmed, and `-1` otherwise. This key is present if and only if there exists a funding
     /// transaction (either in the best chain or in the mempool), regardless of spentness.
     pub funder_height: u32,
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+pub struct OutPointNotificationResp {
+    /// The integer height of the block the funding transaction was confirmed in.
+    ///
+    /// If the funding transaction is in the mempool, the value is `0` if all its inputs are
+    /// confirmed, and `-1` otherwise. This key is present if and only if there exists a funding
+    /// transaction (either in the best chain or in the mempool), regardless of spentness.
+    pub funder_height: u32,
 
     /// The TXID of the spending transaction.
     ///
