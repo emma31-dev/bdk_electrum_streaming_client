@@ -142,7 +142,7 @@ impl OutPointNotification {
     }
 
     /// Returns the spender txid associated with the outpoint.
-    pub fn spender_txid(&self) -> bitcoin::Txid {
+    pub fn spender_txid(&self) -> Option<bitcoin::Txid> {
         self.param_0.spender_txid
     }
 

@@ -185,7 +185,7 @@ pub struct OutPointNotificationResp {
     /// This key is present if and only if there exists a spending transaction (either in the best
     /// chain or in the mempool).
     #[serde(rename = "spender_txhash")]
-    pub spender_txid: bitcoin::Txid,
+    pub spender_txid: Option<bitcoin::Txid>,
 
     /// The integer height of the block the spending transaction was confirmed in.
     ///
