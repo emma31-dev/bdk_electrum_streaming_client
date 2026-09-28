@@ -330,7 +330,7 @@ pub struct OutPointSubscribe {
 }
 
 impl Request for OutPointSubscribe {
-    type Response = response::OutPointSubscribeResp;
+    type Response = response::OutPointNotificationResp;
 
     fn to_method_and_params(&self) -> MethodAndParams {
         (

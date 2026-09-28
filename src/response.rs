@@ -165,27 +165,6 @@ pub struct GetBalanceResp {
 ///
 /// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
 #[derive(Debug, Clone, serde::Deserialize)]
-pub struct OutPointSubscribeResp {
-    /// The integer height of the block the funding transaction was confirmed in.
-    ///
-    /// If the funding transaction is in the mempool, the value is `0` if all its inputs are
-    /// confirmed, and `-1` otherwise. Present if and only if a funding transaction exists (in the
-    /// best chain or in the mempool), regardless of spentness.
-    pub funder_height: Option<i64>,
-
-    /// The TXID of the spending transaction.
-    ///
-    /// Present if and only if a spending transaction exists (in the best chain or in the mempool).
-    pub spender_txhash: Option<bitcoin::Txid>,
-
-    /// The integer height of the block the spending transaction was confirmed in.
-    ///
-    /// If the spending transaction is in the mempool, the value is `0` if all its inputs are
-    /// confirmed, and `-1` otherwise. Present if and only if `spender_txhash` is present.
-    pub spender_height: Option<i64>,
-}
-
-#[derive(Debug, Clone, serde::Deserialize)]
 pub struct OutPointNotificationResp {
     /// The integer height of the block the funding transaction was confirmed in.
     ///
