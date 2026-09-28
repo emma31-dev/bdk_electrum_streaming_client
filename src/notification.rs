@@ -124,31 +124,43 @@ impl ScriptHashNotification {
 /// A notification indicating a change in the status of a specific outpoint.
 ///
 /// Corresponds to the `"blockchain.outpoint.subscribe"` Electrum notification method.
-/// Available in  Electrum protocol v1.7
+/// The notification carries three params: `[tx_hash, txout_idx, status]`.
+///
+/// Available in Electrum protocol v1.7.
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct OutPointNotification {
-    param_0: response::OutPointNotificationResp,
+    /// The TXID of the funding transaction identifying the outpoint.
+    param_0: bitcoin::Txid,
+    /// The output index identifying the outpoint.
+    param_1: u32,
+    /// The current status of the outpoint.
+    param_2: response::OutPointNotificationResp,
 }
 
 impl OutPointNotification {
-    /// Returns the outpoint associated with the notification.
-    pub fn outpoint(&self) -> response::OutPointNotificationResp {
-        self.param_0.clone()
+    /// Returns the outpoint (txid + vout index) this notification refers to.
+    pub fn outpoint(&self) -> bitcoin::OutPoint {
+        bitcoin::OutPoint::new(self.param_0, self.param_1)
     }
 
-    /// Returns the funder height associated with the outpoint.
-    pub fn funder_height(&self) -> u32 {
-        self.param_0.funder_height
+    /// Returns the full status payload of the notification.
+    pub fn status(&self) -> &response::OutPointNotificationResp {
+        &self.param_2
     }
 
-    /// Returns the spender txid associated with the outpoint.
+    /// Returns the funder height associated with the outpoint, if a funding tx exists.
+    pub fn funder_height(&self) -> Option<i64> {
+        self.param_2.funder_height
+    }
+
+    /// Returns the spender txid associated with the outpoint, if a spending tx exists.
     pub fn spender_txid(&self) -> Option<bitcoin::Txid> {
-        self.param_0.spender_txid
+        self.param_2.spender_txid
     }
 
-    /// Returns the spender height associated with the outpoint.
-    pub fn spender_height(&self) -> u32 {
-        self.param_0.spender_height
+    /// Returns the spender height associated with the outpoint, if a spending tx exists.
+    pub fn spender_height(&self) -> Option<i64> {
+        self.param_2.spender_height
     }
 }
 

@@ -158,7 +158,10 @@ pub struct GetBalanceResp {
 /// Response to the `"blockchain.outpoint.subscribe"` method.
 ///
 /// Describes the status of a transaction output (TXO), taking the mempool into consideration.
-/// Available in  Electrum protocol v1.7
+/// All fields are optional — the response may be an empty dictionary `{}` if the outpoint does
+/// not yet exist.
+///
+/// Available in Electrum protocol v1.7.
 ///
 /// See: <https://electrum-protocol.readthedocs.io/en/latest/protocol-methods.html#blockchain-outpoint-subscribe>
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -166,9 +169,20 @@ pub struct OutPointSubscribeResp {
     /// The integer height of the block the funding transaction was confirmed in.
     ///
     /// If the funding transaction is in the mempool, the value is `0` if all its inputs are
-    /// confirmed, and `-1` otherwise. This key is present if and only if there exists a funding
-    /// transaction (either in the best chain or in the mempool), regardless of spentness.
-    pub funder_height: u32,
+    /// confirmed, and `-1` otherwise. Present if and only if a funding transaction exists (in the
+    /// best chain or in the mempool), regardless of spentness.
+    pub funder_height: Option<i64>,
+
+    /// The TXID of the spending transaction.
+    ///
+    /// Present if and only if a spending transaction exists (in the best chain or in the mempool).
+    pub spender_txhash: Option<bitcoin::Txid>,
+
+    /// The integer height of the block the spending transaction was confirmed in.
+    ///
+    /// If the spending transaction is in the mempool, the value is `0` if all its inputs are
+    /// confirmed, and `-1` otherwise. Present if and only if `spender_txhash` is present.
+    pub spender_height: Option<i64>,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -176,9 +190,9 @@ pub struct OutPointNotificationResp {
     /// The integer height of the block the funding transaction was confirmed in.
     ///
     /// If the funding transaction is in the mempool, the value is `0` if all its inputs are
-    /// confirmed, and `-1` otherwise. This key is present if and only if there exists a funding
-    /// transaction (either in the best chain or in the mempool), regardless of spentness.
-    pub funder_height: u32,
+    /// confirmed, and `-1` otherwise. Present if and only if a funding transaction exists (in the
+    /// best chain or in the mempool), regardless of spentness.
+    pub funder_height: Option<i64>,
 
     /// The TXID of the spending transaction.
     ///
@@ -192,7 +206,7 @@ pub struct OutPointNotificationResp {
     /// If the spending transaction is in the mempool, the value is `0` if all its inputs are
     /// confirmed, and `-1` otherwise. This key is present if and only if the `spender_txhash` key
     /// is present.
-    pub spender_height: u32,
+    pub spender_height: Option<i64>,
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]

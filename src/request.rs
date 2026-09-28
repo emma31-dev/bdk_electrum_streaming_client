@@ -323,7 +323,10 @@ pub struct OutPointSubscribe {
     /// The scriptPubKey (output script) corresponding to the outpoint (prevout), as a hexadecimal
     /// string. This helps the server find the outpoint. Behaviour is undefined if an incorrect
     /// value is provided.
-    pub spk_hint: ElectrumScriptHash,
+    ///
+    /// Note: this is the raw scriptPubKey bytes, NOT the script hash. Lighter servers (EPS, BWT,
+    /// Floresta) use this to locate the outpoint.
+    pub spk_hint: bitcoin::ScriptBuf,
 }
 
 impl Request for OutPointSubscribe {
@@ -335,7 +338,7 @@ impl Request for OutPointSubscribe {
             vec![
                 self.tx_hash.to_string().into(),
                 self.txout_idx.into(),
-                self.spk_hint.to_string().into(),
+                self.spk_hint.to_hex_string().into(),
             ],
         )
     }
